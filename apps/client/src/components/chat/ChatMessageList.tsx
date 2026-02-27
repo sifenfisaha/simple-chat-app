@@ -1,15 +1,18 @@
 "use client";
 import { sampleMessages } from "./data";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useScoket } from "@/providor/socketProvidor";
 
 export function ChatMessageList() {
-  const socket = useScoket();
+  const { socket } = useScoket();
+
+  const [messages, setMessages] = useState<string[]>([]);
   useEffect(() => {
     if (!socket) return;
 
     const handleRecive = (data: string) => {
       console.log("Message:", data);
+      setMessages((prev) => [...prev, data]);
     };
 
     socket.on("receive_message", handleRecive);
@@ -17,9 +20,14 @@ export function ChatMessageList() {
     return () => {
       socket.off("receive_message", handleRecive);
     };
-  }, []);
+  }, [socket]);
   return (
     <div className="flex-1 space-y-4 overflow-y-auto px-5 py-6 sm:px-6">
+      {messages.map((m, i) => (
+        <div key={i}>
+          <p>{m}</p>
+        </div>
+      ))}
       {sampleMessages.map((message, index) => (
         <div
           key={message.id}

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useScoket } from "@/providor/socketProvidor";
 
 export function ChatComposer() {
-  const socket = useScoket();
+  const { socket, isConnected, isConnecting } = useScoket();
 
   const sendMessage = (message: string) => {
     socket.emit("send_message", message);
@@ -13,6 +13,7 @@ export function ChatComposer() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!isConnected) return;
 
     if (!message.trim()) return;
 
@@ -42,9 +43,10 @@ export function ChatComposer() {
         />
         <button
           type="submit"
-          className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700"
+          className={`rounded-xl  px-5 py-2.5 text-sm font-semibold text-white transition  ${!isConnecting ? "bg-slate-900 hover:bg-slate-700" : "bg-slate-900/50 disabled:cursor-not-allowed"}`}
+          disabled={!isConnected}
         >
-          Send
+          {isConnecting ? "Connecting..." : "Send"}
         </button>
       </div>
       <p className="mt-2 hidden text-xs text-slate-500">
