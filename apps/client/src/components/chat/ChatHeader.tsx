@@ -18,7 +18,7 @@ export function ChatHeader({
             aria-controls="chat-sidebar"
             aria-expanded={isSidebarOpen}
             aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-900 lg:hidden"
             onClick={onToggleSidebar}
           >
             <svg
