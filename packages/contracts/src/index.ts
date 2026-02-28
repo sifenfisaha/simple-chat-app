@@ -1,12 +1,12 @@
-type ChatMessage = {
+export type Ack = { ok: true } | { ok: false; error: string };
+
+export type ChatMessage = {
   id: string;
   roomId: string;
   text: string;
   senderId: string;
   createdAt: string;
 };
-
-type Ack = { ok: true } | { ok: false; error: string };
 
 export interface ClientToServerEvents {
   join_room: (payload: { roomId: string }, ack?: (res: Ack) => void) => void;

@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json",
@@ -30,6 +31,7 @@
     "@types/express": "latest",
     "@types/morgan": "^1.9.10",
     "@types/node": "latest",
+    "@repo/contracts": "workspace:*",
     "@types/pg": "latest",
     "drizzle-kit": "^0.31.9",
     "tsx": "latest",

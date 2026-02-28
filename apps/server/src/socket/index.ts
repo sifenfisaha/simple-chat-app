@@ -1,26 +1,23 @@
-import { Server } from "socket.io";
-import type {
-  ServerToClientEvents,
-  ClietnToServerEvents,
-} from "../types/types";
+import { Server } from 'socket.io';
+import { ClientToServerEvents, ServerToClientEvents } from '@repo/contracts';
 
 export function registerSocketHandler(
-  io: Server<ClietnToServerEvents, ServerToClientEvents>,
+  io: Server<ClientToServerEvents, ServerToClientEvents>
 ) {
-  io.on("connection", (socket) => {
+  io.on('connection', (socket) => {
     console.log(`user connected: ${socket.id}`);
 
-    socket.on("send_message", ({ message, roomId }) => {
-      console.log("server mess", message);
+    socket.on('send_message', ({ message, roomId }) => {
+      console.log('server mess', message);
       console.log(roomId);
     });
 
-    socket.on("join_room", (roomId) => {
+    socket.on('join_room', (roomId) => {
       socket.join(roomId);
       console.log(`Socket: ${socket.id} joined room: ${roomId}`);
     });
 
-    socket.on("disconnect", () => {
+    socket.on('disconnect', () => {
       console.log(`user disconnected: ${socket.id}`);
     });
   });

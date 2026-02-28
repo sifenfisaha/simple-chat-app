@@ -1,16 +1,16 @@
-"use client";
+'use client';
 import React, {
   createContext,
   useContext,
   useEffect,
   useMemo,
   useState,
-} from "react";
-import { getSocket } from "@/lib/socket";
-import { Socket } from "socket.io-client";
-import { ServerToClientEvents, ClietnToServerEvents } from "@/types/types";
+} from 'react';
+import { getSocket } from '@/lib/socket';
+import { Socket } from 'socket.io-client';
+import { ServerToClientEvents, ClientToServerEvents } from '@repo/contracts';
 
-type TypedSocket = Socket<ServerToClientEvents, ClietnToServerEvents>;
+type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
 type socketContextValue = {
   socket: TypedSocket;
@@ -45,9 +45,9 @@ export function SocketProvidor({ children }: { children: React.ReactNode }) {
       setLastError(err.message);
     };
 
-    socket.on("connect", handleConnect);
-    socket.on("disconnect", handleDisconnect);
-    socket.on("connect_error", handleConnectError);
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('connect_error', handleConnectError);
 
     if (!socket.connected) {
       setIsConnecting(true);
@@ -55,16 +55,16 @@ export function SocketProvidor({ children }: { children: React.ReactNode }) {
     }
 
     return () => {
-      socket.off("connect", handleConnect);
-      socket.off("disconnect", handleDisconnect);
-      socket.off("connect_error", handleConnectError);
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('connect_error', handleConnectError);
       socket.disconnect();
     };
   }, [socket]);
 
   const value = useMemo(
     () => ({ socket, isConnected, isConnecting, lastError }),
-    [socket, isConnected, isConnecting, lastError],
+    [socket, isConnected, isConnecting, lastError]
   );
 
   return <SocketContext value={value}>{children}</SocketContext>;
@@ -73,6 +73,6 @@ export function SocketProvidor({ children }: { children: React.ReactNode }) {
 export function useScoket() {
   const socket = useContext(SocketContext);
   if (!socket)
-    throw new Error("useScoket must be used inside a SocketProvidor.");
+    throw new Error('useScoket must be used inside a SocketProvidor.');
   return socket;
 }
