@@ -1,4 +1,6 @@
-export type Ack = { ok: true } | { ok: false; error: string };
+export type Ack<T = undefined> =
+  | (T extends undefined ? { ok: true } : { ok: true; data: T })
+  | { ok: false; errro: string };
 
 export type ChatMessage = {
   id: string;
@@ -8,11 +10,26 @@ export type ChatMessage = {
   createdAt: string;
 };
 
+export type JoinRoomPayload = {
+  roomId: string;
+};
+
+export type SendMessagePayload = {
+  roomId: string;
+  text: string;
+};
+
+export type JoinRoomAck = Ack<{ roomId: string }>;
+export type SendMessageAck = Ack<{ message: ChatMessage }>;
+
 export interface ClientToServerEvents {
-  join_room: (payload: { roomId: string }, ack?: (res: Ack) => void) => void;
+  join_room: (
+    payload: JoinRoomPayload,
+    ack?: (res: JoinRoomAck) => void
+  ) => void;
   send_message: (
-    payload: { roomId: string; text: string },
-    ack?: (res: Ack) => void
+    payload: SendMessagePayload,
+    ack?: (res: SendMessageAck) => void
   ) => void;
 }
 

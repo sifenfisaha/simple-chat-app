@@ -1,5 +1,10 @@
 import { Server } from 'socket.io';
-import { ClientToServerEvents, ServerToClientEvents } from '@repo/contracts';
+import {
+  ChatMessage,
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from '@repo/contracts';
+import { nanoid } from 'nanoid';
 
 export function registerSocketHandler(
   io: Server<ClientToServerEvents, ServerToClientEvents>
@@ -7,14 +12,42 @@ export function registerSocketHandler(
   io.on('connection', (socket) => {
     console.log(`user connected: ${socket.id}`);
 
-    socket.on('send_message', ({ message, roomId }) => {
-      console.log('server mess', message);
-      console.log(roomId);
+    socket.on('join_room', ({ roomId }, ack) => {
+      const normalizedRoomId = roomId?.trim();
+
+      if (!normalizedRoomId) {
+        ack?.({ ok: false, errro: 'roomId is required' });
+        return;
+      }
+
+      socket.join(normalizedRoomId);
+      console.log(`Socket ${socket.id} joined room ${normalizedRoomId}`);
+      ack?.({ ok: true, data: { roomId: normalizedRoomId } });
     });
 
-    socket.on('join_room', (roomId) => {
-      socket.join(roomId);
-      console.log(`Socket: ${socket.id} joined room: ${roomId}`);
+    socket.on('send_message', ({ roomId, text }, ack) => {
+      const normalizedRoomId = roomId.trim();
+      const normalizedText = text.trim();
+
+      if (!normalizedRoomId) {
+        ack?.({ ok: false, errro: 'roomId is required' });
+        return;
+      }
+
+      if (!normalizedText) {
+        ack?.({ ok: false, errro: 'text is required' });
+        return;
+      }
+
+      const message: ChatMessage = {
+        text,
+        roomId,
+        senderId: socket.id,
+        createdAt: new Date().toISOString(),
+        id: nanoid(),
+      };
+      io.to(normalizedRoomId).emit('receive_message', message);
+      ack?.({ ok: true, data: { message } });
     });
 
     socket.on('disconnect', () => {
