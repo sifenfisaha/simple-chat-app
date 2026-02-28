@@ -1,26 +1,51 @@
-"use client";
-import React, { useState } from "react";
-import { useScoket } from "@/providor/socketProvidor";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { useScoket } from '@/providor/socketProvidor';
+
+const ROOM_ID = 'general';
 
 export function ChatComposer() {
   const { socket, isConnected, isConnecting } = useScoket();
 
-  const sendMessage = (message: string) => {
-    socket.emit("send_message", () => {
-      return;
+  const [message, setMessage] = useState('');
+  const [joinError, setJoinError] = useState<string | null>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [isSending, setIsSending] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isConnected) return;
+
+    socket.emit('join_room', { roomId: ROOM_ID }, (res) => {
+      if (!res.ok) {
+        setJoinError(res.errro);
+        return;
+      }
+      setJoinError(null);
+    });
+  }, [socket, isConnected]);
+
+  const sendMessage = (text: string) => {
+    console.log('sending..');
+    setIsSending(true);
+    setSendError(null);
+
+    socket.emit('send_message', { roomId: ROOM_ID, text }, (res) => {
+      setIsSending(false);
+      if (!res.ok) {
+        setSendError(res.errro);
+        return;
+      }
+      setMessage('');
     });
   };
 
-  const [message, setMessage] = useState<string>("");
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    console.log('submit');
     e.preventDefault();
     if (!isConnected) return;
-
-    if (!message.trim()) return;
-
-    sendMessage(message.trim());
-    setMessage("");
+    const trimmed = message.trim();
+    if (!trimmed) return;
+    sendMessage(trimmed);
   };
 
   return (
@@ -45,15 +70,22 @@ export function ChatComposer() {
         />
         <button
           type="submit"
-          className={`rounded-xl  px-5 py-2.5 text-sm font-semibold text-white transition  ${!isConnecting ? "bg-slate-900 hover:bg-slate-700" : "bg-slate-900/50 disabled:cursor-not-allowed"}`}
-          disabled={!isConnected}
+          className={`rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition ${
+            !isConnecting && !isSending
+              ? 'bg-slate-900 hover:bg-slate-700'
+              : 'bg-slate-900/50 disabled:cursor-not-allowed'
+          }`}
+          disabled={!isConnected || isSending}
         >
-          {isConnecting ? "Connecting..." : "Send"}
+          {isConnecting ? 'Connecting...' : isSending ? 'Sending...' : 'Send'}
         </button>
       </div>
-      <p className="mt-2 hidden text-xs text-slate-500">
-        Enter sends your message.
-      </p>
+      {joinError ? (
+        <p className="mt-2 text-xs text-rose-600">{joinError}</p>
+      ) : null}
+      {sendError ? (
+        <p className="mt-2 text-xs text-rose-600">{sendError}</p>
+      ) : null}
     </form>
   );
 }
