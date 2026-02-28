@@ -17,7 +17,7 @@ export function ChatComposer() {
 
     socket.emit('join_room', { roomId: ROOM_ID }, (res) => {
       if (!res.ok) {
-        setJoinError(res.errro);
+        setJoinError(res.error);
         return;
       }
       setJoinError(null);
@@ -25,14 +25,13 @@ export function ChatComposer() {
   }, [socket, isConnected]);
 
   const sendMessage = (text: string) => {
-    console.log('sending..');
     setIsSending(true);
     setSendError(null);
 
     socket.emit('send_message', { roomId: ROOM_ID, text }, (res) => {
       setIsSending(false);
       if (!res.ok) {
-        setSendError(res.errro);
+        setSendError(res.error);
         return;
       }
       setMessage('');
@@ -40,7 +39,6 @@ export function ChatComposer() {
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    console.log('submit');
     e.preventDefault();
     if (!isConnected) return;
     const trimmed = message.trim();

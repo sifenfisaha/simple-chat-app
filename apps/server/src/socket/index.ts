@@ -12,11 +12,12 @@ export function registerSocketHandler(
   io.on('connection', (socket) => {
     console.log(`user connected: ${socket.id}`);
 
-    socket.on('join_room', ({ roomId }, ack) => {
+    socket.on('join_room', (payload, ack) => {
+      const roomId = typeof payload?.roomId === 'string' ? payload.roomId : '';
       const normalizedRoomId = roomId?.trim();
 
       if (!normalizedRoomId) {
-        ack?.({ ok: false, errro: 'roomId is required' });
+        ack?.({ ok: false, error: 'roomId is required' });
         return;
       }
 
@@ -25,23 +26,25 @@ export function registerSocketHandler(
       ack?.({ ok: true, data: { roomId: normalizedRoomId } });
     });
 
-    socket.on('send_message', ({ roomId, text }, ack) => {
+    socket.on('send_message', (payload, ack) => {
+      const roomId = typeof payload?.roomId === 'string' ? payload.roomId : '';
+      const text = typeof payload?.text === 'string' ? payload.text : '';
       const normalizedRoomId = roomId.trim();
       const normalizedText = text.trim();
 
       if (!normalizedRoomId) {
-        ack?.({ ok: false, errro: 'roomId is required' });
+        ack?.({ ok: false, error: 'roomId is required' });
         return;
       }
 
       if (!normalizedText) {
-        ack?.({ ok: false, errro: 'text is required' });
+        ack?.({ ok: false, error: 'text is required' });
         return;
       }
 
       const message: ChatMessage = {
-        text,
-        roomId,
+        text: normalizedText,
+        roomId: normalizedRoomId,
         senderId: socket.id,
         createdAt: new Date().toISOString(),
         id: nanoid(),

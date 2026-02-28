@@ -1,6 +1,6 @@
 export type Ack<T = undefined> =
   | (T extends undefined ? { ok: true } : { ok: true; data: T })
-  | { ok: false; errro: string };
+  | { ok: false; error: string };
 
 export type ChatMessage = {
   id: string;
