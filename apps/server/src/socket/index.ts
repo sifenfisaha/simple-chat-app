@@ -10,9 +10,9 @@ export function registerSocketHandler(
   io.on("connection", (socket) => {
     console.log(`user connected: ${socket.id}`);
 
-    socket.on("send_message", (message) => {
+    socket.on("send_message", ({ message, roomId }) => {
       console.log("server mess", message);
-      socket.emit("receive_message", message);
+      console.log(roomId);
     });
 
     socket.on("join_room", (roomId) => {

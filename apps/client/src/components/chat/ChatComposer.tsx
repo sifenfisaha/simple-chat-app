@@ -6,7 +6,9 @@ export function ChatComposer() {
   const { socket, isConnected, isConnecting } = useScoket();
 
   const sendMessage = (message: string) => {
-    socket.emit("send_message", message);
+    socket.emit("send_message", () => {
+      return;
+    });
   };
 
   const [message, setMessage] = useState<string>("");

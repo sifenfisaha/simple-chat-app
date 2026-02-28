@@ -10,9 +10,9 @@ export function ChatMessageList() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleRecive = (data: string) => {
+    const handleRecive = (data: { message: string; roomId: string }) => {
       console.log("Message:", data);
-      setMessages((prev) => [...prev, data]);
+      setMessages((prev) => [...prev, data.message]);
     };
 
     socket.on("receive_message", handleRecive);
