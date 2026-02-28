@@ -1,14 +1,16 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ChatBackground } from "./ChatBackground";
-import { ChatComposer } from "./ChatComposer";
-import { ChatHeader } from "./ChatHeader";
-import { ChatMessageList } from "./ChatMessageList";
-import { ChatSidebar } from "./ChatSidebar";
+import { useState } from 'react';
+import { ChatBackground } from './ChatBackground';
+import { ChatComposer } from './ChatComposer';
+import { ChatHeader } from './ChatHeader';
+import { ChatMessageList } from './ChatMessageList';
+import { ChatSidebar } from './ChatSidebar';
+import { useAppContext } from '@/providor/AppProvidor';
 
 export function ChatShell() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { currentRoom } = useAppContext();
 
   return (
     <main className="relative h-screen max-h-screen overflow-hidden text-slate-900">
@@ -30,12 +32,33 @@ export function ChatShell() {
         ) : null}
 
         <section className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          <ChatHeader
-            isSidebarOpen={isSidebarOpen}
-            onToggleSidebar={() => setIsSidebarOpen((open) => !open)}
-          />
-          <ChatMessageList />
-          <ChatComposer />
+          {!currentRoom ? (
+            <>
+              <ChatHeader
+                isSidebarOpen={isSidebarOpen}
+                onToggleSidebar={() => setIsSidebarOpen((open) => !open)}
+              />
+              <div className="flex h-full flex-col items-center justify-center gap-4 px-5 text-center">
+                <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
+                  Welcome to Chat!
+                </h2>
+                <p className="max-w-sm text-sm text-slate-500">
+                  Join a room from the sidebar or create a new one to start
+                  chatting.
+                </p>
+              </div>
+            </>
+          ) : null}
+          {currentRoom ? (
+            <>
+              <ChatHeader
+                isSidebarOpen={isSidebarOpen}
+                onToggleSidebar={() => setIsSidebarOpen((open) => !open)}
+              />
+              <ChatMessageList />
+              <ChatComposer />
+            </>
+          ) : null}
         </section>
       </section>
     </main>

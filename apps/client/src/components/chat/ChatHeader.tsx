@@ -1,4 +1,4 @@
-import { currentRoom, onlineCount } from "./data";
+import { useAppContext } from '@/providor/AppProvidor';
 
 type ChatHeaderProps = {
   isSidebarOpen: boolean;
@@ -9,6 +9,7 @@ export function ChatHeader({
   isSidebarOpen,
   onToggleSidebar,
 }: ChatHeaderProps) {
+  const { currentRoom } = useAppContext();
   return (
     <header className="border-b border-slate-200/70 bg-white/55 px-5 py-4 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -17,7 +18,7 @@ export function ChatHeader({
             type="button"
             aria-controls="chat-sidebar"
             aria-expanded={isSidebarOpen}
-            aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+            aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
             className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-900 lg:hidden"
             onClick={onToggleSidebar}
           >
@@ -44,7 +45,7 @@ export function ChatHeader({
               )}
             </svg>
           </button>
-          <div>
+          <div className={`ml-2 ${!currentRoom ? 'hidden' : ''}`}>
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
               Current Room
             </p>
@@ -52,17 +53,6 @@ export function ChatHeader({
               #{currentRoom}
             </h2>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-            {onlineCount} online
-          </span>
-          <button
-            type="button"
-            className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-          >
-            Settings
-          </button>
         </div>
       </div>
     </header>
