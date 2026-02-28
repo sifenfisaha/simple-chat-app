@@ -11,15 +11,7 @@
     "typecheck": "pnpm --filter @repo/client typecheck && pnpm --filter @repo/server typecheck",
     "start": "concurrently -n client,server -c cyan,green \"pnpm --filter @repo/client start\" \"pnpm --filter @repo/server start\"",
     "start:client": "pnpm --filter @repo/client start",
-    "start:server": "pnpm --filter @repo/server start",
-    "db:up": "docker compose --env-file .env.postgres up -d postgres",
-    "db:down": "docker compose --env-file .env.postgres down",
-    "db:reset": "docker compose --env-file .env.postgres down -v && docker compose --env-file .env.postgres up -d postgres",
-    "db:generate": "pnpm --filter @repo/server db:generate",
-    "db:migrate": "pnpm --filter @repo/server db:migrate",
-    "db:push": "pnpm --filter @repo/server db:push",
-    "db:check": "pnpm --filter @repo/server db:check",
-    "db:studio": "pnpm --filter @repo/server db:studio"
+    "start:server": "pnpm --filter @repo/server start"
   },
   "devDependencies": {
     "concurrently": "^9.2.0"

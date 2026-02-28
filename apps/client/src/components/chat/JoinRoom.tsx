@@ -53,6 +53,7 @@ export default function JoinRoom({ onJoin }: { onJoin: () => void }) {
       <div className="mt-3 flex flex-col gap-2">
         <form onSubmit={(e) => handleSubmit(e)} className="flex gap-2">
           <input
+            autoComplete="off"
             id="room-input"
             type="text"
             value={roomInput}
